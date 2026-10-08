@@ -1,0 +1,6 @@
+{
+    "telegram_token": "123456:ABC-EXAMPLE",
+    "telegram_chat_id": "123456789",
+    "ollama_url": "http://localhost:11434/v1",
+    "model": "qwen2.5:7b"
+}

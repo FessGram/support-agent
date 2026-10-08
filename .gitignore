@@ -1,0 +1,4 @@
+config.json
+*.log
+tickets.csv
+__pycache__/
