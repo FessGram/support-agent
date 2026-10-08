@@ -39,6 +39,7 @@ def tg(method, **params):
         return r.json().get("result", [])
     except requests.RequestException as e:
         logging.error("Telegram API: %s", e)
+        time.sleep(3)   # не спамим в цикле ошибок
         return []
 
 
@@ -52,11 +53,14 @@ def load_tickets():
 
 STOP_WORDS = {"и", "в", "на", "не", "с", "по", "для", "что", "как", "это", "у", "о", "же"}
 
+def normalize_word(w):
+    # грубый стемминг: сервер/сервером -> серве, работать/работает -> рабо
+    return w[:5] if len(w) > 5 else w
 
 def similarity(text_a, text_b):
     """Доля общих значимых слов (коэффициент Жаккара), от 0 до 1."""
-    wa = set(re.findall(r"[а-яa-z0-9]+", text_a.lower())) - STOP_WORDS
-    wb = set(re.findall(r"[а-яa-z0-9]+", text_b.lower())) - STOP_WORDS
+    wa = {normalize_word(w) for w in re.findall(r"[а-яa-z0-9]+", text_a.lower())} - STOP_WORDS
+    wb = {normalize_word(w) for w in re.findall(r"[а-яa-z0-9]+", text_b.lower())} - STOP_WORDS
     if not wa or not wb:
         return 0.0
     return len(wa & wb) / len(wa | wb)
